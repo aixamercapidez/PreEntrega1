@@ -38,7 +38,15 @@ router.post('/', async (request, response)=>{
     try{
         const newproduct = request.body
         const product = await products.addProduct(newproduct)
-        response.status(200).send({status: "success", payload : {newproduct}})
+        if(!newproduct.title || !newproduct.description || !newproduct.price || !newproduct.code || !newproduct.stock || !newproduct.category){ 
+            return response.status(400).send({status:'error', mensaje: 'All fields are required (except thumbnail)'})
+        }
+       if (product === 1){
+        return response.status(400).send({status:'error', mensaje: 'Duplicated Code'})
+    }
+       
+        else{
+        response.status(201).send({status:'success', payload: product})}
 
     }catch(error){
         response.status(500).send({error})
@@ -50,7 +58,7 @@ router.put('/:pid', async (request, response)=>{
         const id =Number(request.params.pid)
         const updateproduct = request.body
         const product = await products.updateProduct(id,updateproduct)
-        response.status(200).send({status: "success", payload : {product}})
+        response.status(200).send({status: "success", payload : product})
     }
     catch(error){
         response.status(500).send({error})
@@ -60,15 +68,14 @@ router.put('/:pid', async (request, response)=>{
 
 
 router.delete('/:pid', async (request, response)=>{
-    try{
+    
         const id =Number( request.params.pid)
         const deleteproductsbyid = await products.deleteProduct(id)
-        if (deleteproductsbyid = error) return response.send({error:"Product not found"})
-        response.status(200).send({status: 'success'})
-    }
-    catch(error){
-        response.status(500).send({error})
-    }
+        if (deleteproductsbyid === 1) {return response.send({error:"Product not found"})}
+        else{
+        response.status(200).send({status: 'success'})}
+   
+   
 
 })
 

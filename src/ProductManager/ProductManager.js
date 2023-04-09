@@ -3,7 +3,7 @@ const fs = require('fs')
 class ProductManager {
     constructor() {
 
-       
+
         this.path = './ProductManager/Products.json'
 
     }
@@ -20,31 +20,41 @@ class ProductManager {
     }
 
     addProduct = async (productNew) => {
-        const products = await this.getProducts();
-        let newcode = await products.find(prod => prod.code === productNew.code)
-        if (newcode) {console.log('Code duplicado' )}
-        else{
-        const product = {};
-        product.title = productNew.title
-        product.description = productNew.description
-        product.price = productNew.price
-        product.thumbnail =[productNew.thumbnail]
-        product.stock = productNew.stock
-        product.code = productNew.code
-        product.status = true
-        product.category = productNew.category
+        try {
+            const products = await this.getProducts();
+            let newcode = await products.find(prod => prod.code === productNew.code)
+            if (newcode) { return 1 }
+            else {
 
-       if(products.length === 0){
-        product.id = 1
+               
+                    
+                    const product = {};
+                    product.title = productNew.title
+                    product.description = productNew.description
+                    product.price = productNew.price
+                    product.thumbnail = [productNew.thumbnail]
+                    product.stock = productNew.stock
+                    product.code = productNew.code
+                    product.status = true
+                    product.category = productNew.category
 
-       }else{
-        product.id = await products[products.length - 1].id + 1;
-       }
-        
-        
-        products.push(product)
-        await fs.promises.writeFile(this.path, JSON.stringify(products, null, '\t'));
-    }
+                    if (products.length === 0) {
+                        product.id = 1
+
+                    } else {
+                        product.id = await products[products.length - 1].id + 1;
+                    }
+
+
+                    products.push(product)
+                    await fs.promises.writeFile(this.path, JSON.stringify(products, null, '\t'));
+                    return console.log("success")
+                
+            }
+        } catch (error) {
+            return (error)
+
+        }
 
     }
     getProductById = async (productId) => {
@@ -76,14 +86,19 @@ class ProductManager {
     }
 
     deleteProduct = async (productId) => {
-      
+
         try {
-            const products = await this.getProducts();
-            let productdelete = products.filter(prod => prod.id !== productId)
-            
-            await fs.promises.writeFile(this.path, JSON.stringify(productdelete, 'utf-8', '\t'))
-            return'successfully Deleted Product'
            
+            const products = await this.getProducts();
+
+            let product = products.find(prod => prod.id === productId)
+            if (!product) {return 1}
+            else{
+            let productdelete = products.filter(prod => prod.id !== productId)
+
+            await fs.promises.writeFile(this.path, JSON.stringify(productdelete, 'utf-8', '\t'))
+            return 'successfully Deleted Product'
+            }
 
         }
         catch (error) {
