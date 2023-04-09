@@ -28,7 +28,7 @@ class ProductManager {
         product.title = productNew.title
         product.description = productNew.description
         product.price = productNew.price
-        product.thumbnail =productNew.thumbnail
+        product.thumbnail =[productNew.thumbnail]
         product.stock = productNew.stock
         product.code = productNew.code
         product.status = true
